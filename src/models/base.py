@@ -127,8 +127,25 @@ class GPTBase(nn.Module):
             h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
-
-        self.lm_head = BFPLinear(config.n_embd, config.vocab_size, bias=False)
+        
+        bfp_args = {'num_format': 'bfp',
+                'sparsity_num_format': 'bfp',
+                'rounding_mode': 'stoc',
+                'epsilon': 1e-8,
+                'mant_bits': 3,
+                'bfp_block_size': 64,
+                'weight_mant_bits': 15,
+                'in_sparsity': False,
+                'w_sparsity': False,
+                'grad_sparsity': False,
+                'N': [2],
+                'M': [4],
+                'rearrange': False,
+                'sparsity_frac': 0,
+                'device': 'cuda'}
+        bfp_args['mant_bits']=5
+        self.lm_head = BFPLinear(config.n_embd, config.vocab_size, bias=False, **bfp_args)
+        bfp_args['mant_bits']=3
         # with weight tying when using torch.compile() some warnings get generated:
         # "UserWarning: functional_call was passed multiple values for tied weights.
         # This behavior is deprecated and will be an error in future versions"

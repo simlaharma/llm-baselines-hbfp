@@ -25,10 +25,12 @@ def train_base(model, opt, data, scheduler, iterations, acc_steps, batch_size, s
 
     model.train()
 
+    print(model)
+
     t0 = time.time()
     while itr < iterations:
         tracking.current_epoch = itr
-        
+
         for microstep_idx in range(acc_steps):  # gradient accumulation
             x, y = get_batch(data['train'], sequence_length, batch_size, device=extra_args.device)
             with type_ctx:
@@ -86,6 +88,16 @@ def train_base(model, opt, data, scheduler, iterations, acc_steps, batch_size, s
 
                 model.train()
                 t0 = time.time()
+
+        if distributed_backend.is_master_process() and itr%1000==0:
+            print(f"saving checkpoint to {ckpt_path[:-3]}_{itr}.pt")
+            ckpt_path=f'{ckpt_path[:-3]}_{itr}.pt'
+            save_checkpoint(distributed_backend=distributed_backend,
+                            model=model,
+                            opt=opt,
+                            scheduler=scheduler,
+                            itr=itr,
+                            ckpt_path=ckpt_path)
 
     if distributed_backend.is_master_process():
         print(f"saving checkpoint to {ckpt_path}")
