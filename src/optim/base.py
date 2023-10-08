@@ -7,7 +7,7 @@ import time
 import copy
 
 from .utils import eval, get_batch, save_checkpoint
-
+import bfp.bfp_utils as tracking
 
 def train_base(model, opt, data, scheduler, iterations, acc_steps, batch_size, sequence_length, eval_freq, ckpt_path, distributed_backend, extra_args):
     device_type = 'cuda' if 'cuda' in str(extra_args.device) else 'cpu'
@@ -27,6 +27,8 @@ def train_base(model, opt, data, scheduler, iterations, acc_steps, batch_size, s
 
     t0 = time.time()
     while itr < iterations:
+        tracking.current_epoch = itr
+        
         for microstep_idx in range(acc_steps):  # gradient accumulation
             x, y = get_batch(data['train'], sequence_length, batch_size, device=extra_args.device)
             with type_ctx:

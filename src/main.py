@@ -16,6 +16,8 @@ from optim.base import train_base
 from optim.sparse import train_sparse
 import distributed
 
+from bfp.bfp_ops import BFPConv2d, BFPLinear, unpack_bfp_args, torch_matmul_bfp
+from bfp.bfp_optim import BFPAdamW
 
 def get_args():
     parser = argparse.ArgumentParser(allow_abbrev=False)
@@ -79,10 +81,10 @@ def main(args):
         optimized_params_cnt += sum([p.numel() for p in g["params"]])
     print("number of optimized parameters: %.2fM" % (optimized_params_cnt/1e6,))
     if args.opt == 'adamw':
-        use_fused = (device_type == 'cuda') and ('fused' in inspect.signature(torch.optim.AdamW).parameters)
+        use_fused = False ### (device_type == 'cuda') and ('fused' in inspect.signature(torch.optim.AdamW).parameters)
         print(f"using fused AdamW: {use_fused}")
         extra_args = dict(fused=True) if use_fused else dict()
-        opt = torch.optim.AdamW(group_specs, lr=args.lr, betas=(args.beta1, args.beta2),
+        opt = BFPAdamW(group_specs, lr=args.lr, betas=(args.beta1, args.beta2),
                                 weight_decay=args.weight_decay, **extra_args)
     else:
         opt = torch.optim.SGD(group_specs, lr=args.lr, momentum=0.9, weight_decay=args.weight_decay)
