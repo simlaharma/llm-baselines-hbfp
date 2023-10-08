@@ -142,10 +142,14 @@ class GPTBase(nn.Module):
                 'M': [4],
                 'rearrange': False,
                 'sparsity_frac': 0,
-                'device': 'cuda'}
+                'device': 'cuda',
+                'mixed_layer':0}
+        
         bfp_args['mant_bits']=5
+        bfp_args['mixed_layer']=1
         self.lm_head = BFPLinear(config.n_embd, config.vocab_size, bias=False, **bfp_args)
         bfp_args['mant_bits']=3
+        bfp_args['mixed_layer']=0
         # with weight tying when using torch.compile() some warnings get generated:
         # "UserWarning: functional_call was passed multiple values for tied weights.
         # This behavior is deprecated and will be an error in future versions"
