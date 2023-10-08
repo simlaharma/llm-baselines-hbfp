@@ -79,7 +79,8 @@ def _float_to_bfp(t, mant_bits, epsilon, rounding_mode, device, exp_given=None):
     """
     Convert float tensor t to bfp
     """
-    #print(f'...................  {mant_bits}  .................... float to bfp')
+    #if mant_bits>3:
+    #    print(f'...................{tracking.current_epoch} :  {mant_bits}  .................... float to bfp')
     exp = get_exponent(t, epsilon)
 
     #The interval between two consecutive numbers with that exponent value

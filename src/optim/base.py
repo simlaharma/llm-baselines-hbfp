@@ -29,6 +29,7 @@ def train_base(model, opt, data, scheduler, iterations, acc_steps, batch_size, s
 
     t0 = time.time()
     while itr < iterations:
+        print(f'--- {itr} ---')
         tracking.current_epoch = itr
 
         for microstep_idx in range(acc_steps):  # gradient accumulation
