@@ -6,11 +6,11 @@ import distributed
 def parse_args(base_parser, args, namespace):
     parser = base_parser
     # General training params
-    parser.add_argument('--batch_size', default=50, type=int)
+    parser.add_argument('--batch_size', default=25, type=int)
     parser.add_argument('--acc_steps', default=4, type=int)
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--device', default='cuda:0', type=str)
-    parser.add_argument('--iterations', default=15000, type=int)
+    parser.add_argument('--iterations', default=30000, type=int)
     parser.add_argument('--lr', default=2e-3, type=float)
     parser.add_argument('--warmup_percent', default=0.02, type=float)
     parser.add_argument('--weight_decay', default=1e-3, type=float)

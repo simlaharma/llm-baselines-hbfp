@@ -166,10 +166,10 @@ def float_to_bfp_blocked(t, mant_bits, epsilon, rounding_mode, device, bfp_block
     assert (((sparsity_num_format == 'bfp') and (bfp_block_size > 0)) or (sparsity_num_format == 'fp32'))
 
     intervals=mixed_precision.split(',')
-    #print(f'==================== {tracking.current_epoch} and {mixed_precision}')
+    print(f'==================== {tracking.current_epoch} and {mixed_precision}')
     for i in range(int(len(intervals)/2)):
         if (mixed_layer==1) or (int(intervals[int(2*i)])<int(tracking.current_epoch)<=int(intervals[int(2*i)+1])):
-            #print(f'................................... {tracking.current_epoch}')
+            print(f'................................... {tracking.current_epoch}')
             mant_bits = 5
 
     if in_sparsity == True and identifier == 'in':
@@ -299,7 +299,7 @@ def unpack_bfp_args(kwargs):
                 ('sparsity_num_format', 'bfp'),
                 ('rounding_mode', 'stoc'),
                 ('epsilon', 1e-8),
-                ('mant_bits', 9),
+                ('mant_bits', 3),
                 ('bfp_block_size', 64),
                 ('weight_mant_bits', 15),
                 ('in_sparsity', False),
@@ -310,7 +310,7 @@ def unpack_bfp_args(kwargs):
                 ('rearrange', False),
                 ('sparsity_frac', 0),
                 ('device', 'cuda'),
-                ('mixed_precision', '99000,100000'),
+                ('mixed_precision', '29000,30001'),
                 ('mixed_layer', 0)]
 
     for arg, default in bfp_argn:
